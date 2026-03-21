@@ -3,7 +3,12 @@
     "PostToolUse": [
       {
         "matcher": "Edit|Write",
-        "command": "echo '⚠️  File edited. Run tests if applicable.'"
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '⚠️  File edited. Run tests if applicable.'"
+          }
+        ]
       }
     ]
   },
