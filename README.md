@@ -12,6 +12,7 @@ Template base de configuração para projetos usando **Claude Code**. Inclui ski
   commands/     # Atalhos de fluxo invocados manualmente
   settings.json # Hooks e permissões
 CLAUDE.md       # Contexto do projeto para o Claude
+GEMINI.md       # Contexto técnico para o Gemini CLI e chat âncora web
 .claudeignore   # Arquivos que o Claude deve ignorar
 ```
 
@@ -162,6 +163,19 @@ Ativada automaticamente ao mencionar APIs externas, webhooks ou serviços de ter
 
 ---
 
+### 🤖 `gemini`
+**Quando usar:** Ao tomar decisões arquiteturais, modelar domínio, realizar análise de segurança ampla, ou sempre que o contexto envolver uma escolha que se beneficia de perspectiva externa antes de implementar. Ativada também ao receber outputs prefixados com `[GEMINI ANALYSIS]` ou `[GEMINI SECURITY]`.
+
+**O que faz:** Define o papel do Gemini Web (chat âncora) e do Gemini CLI no fluxo híbrido. Estabelece gatilhos para sugerir ativamente o uso do Gemini, o que não delegar, como fazer passagem de contexto e quando sincronizar o chat âncora.
+
+**Como chamar:**
+```
+/gemini
+```
+Ativada automaticamente em decisões arquiteturais, análise de segurança ampla e ao receber outputs do Gemini.
+
+---
+
 ### 🔍 `code-review`
 **Quando usar:** Antes de abrir qualquer PR. Invoque para uma revisão sistemática cobrindo todas as dimensões de qualidade.
 
@@ -245,6 +259,41 @@ Commands são fluxos de trabalho completos que você invoca manualmente. Diferen
 ```
 /review
 /review src/module/arquivo.py
+```
+
+---
+
+### 🔭 `/gemini-analyze`
+**Quando usar:** Ao querer uma visão global do codebase — inconsistências arquiteturais, débito técnico, violações de convenção — sem precisar chunkar arquivos manualmente.
+
+**O que faz:** Invoca o Gemini CLI com a janela de 1M tokens para analisar o repositório inteiro ou um módulo específico. Retorna findings estruturados sobre arquitetura, débito técnico e inconsistências, prefixados com `[GEMINI ANALYSIS]`.
+
+```
+/gemini-analyze
+/gemini-analyze src/payments
+```
+
+---
+
+### 🔐 `/gemini-security`
+**Quando usar:** Antes de abrir um PR com mudanças sensíveis, ou ao revisar um módulo crítico de segurança.
+
+**O que faz:** Invoca o Gemini CLI para revisão de segurança focada em OWASP Top 10, multi-tenancy e secrets. Cobre o diff atual ou um módulo específico. Findings retornam com severidade (CRITICAL / HIGH / MEDIUM / LOW) e recomendação de fix, prefixados com `[GEMINI SECURITY]`.
+
+```
+/gemini-security
+/gemini-security src/auth
+```
+
+---
+
+### 🔄 `/gemini-sync`
+**Quando usar:** Após decisões arquiteturais significativas, adição de novos módulos, ou atualização do `GEMINI.md`.
+
+**O que faz:** Gera um bloco estruturado de atualização para colar no chat âncora do Gemini Web, mantendo o arquiteto externo sincronizado com o estado atual do projeto. Inclui mudanças recentes, ADRs aceitos e contexto para próximas discussões.
+
+```
+/gemini-sync
 ```
 
 ---
