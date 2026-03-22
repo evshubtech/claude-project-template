@@ -1,7 +1,7 @@
 # [Project Name] — Gemini Context
 
 Template de contexto técnico para alimentar o Gemini CLI e o chat âncora web.
-Atualize este arquivo a cada mudança arquitetural significativa e sincronize com o chat âncora via `/gemini-sync`.
+Atualize este arquivo a cada mudança arquitetural significativa e sincronize com o chat âncora via `/agents-sync`.
 
 ---
 
@@ -11,7 +11,16 @@ Atualize este arquivo a cada mudança arquitetural significativa e sincronize co
 
 ---
 
+## Mandatory Workflow Directives
+1. **Skill Discovery**: Before providing strategic advice, security audits, or architectural reviews, you MUST consult the relevant skill in `.gemini/skills/`. This ensures all recommendations follow the project's specialized expert guidelines.
+2. **Interactive Commands**: NEVER ask the user to execute commands that require confirmation via Gemini CLI if the agent cannot handle them directly. Prefer asking the user to run them in their terminal.
+3. **User Validation**: When proposing architectural changes or security fixes, always provide a validation strategy. Tell the user **what** to test and **how** to confirm the fix before they bring it to Claude Code for implementation.
+
+---
+
 ## Stack
+... [rest of the file remains similar but with command updates] ...
+
 
 - Language: [ex: Python / TypeScript]
 - Framework: [ex: FastAPI / Express.js]

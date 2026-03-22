@@ -1,6 +1,6 @@
 ---
 name: code-review
-description: Perform a systematic review before any PR or commit. Use when the user asks for a code review, is about to open a PR, or wants to validate changes across security, correctness, tests, and documentation. Invoke with /code-review or when the user says "review this" or "is this ready to merge".
+description: Perform a systematic review before any PR or commit. Use when the user asks for a code review, is about to open a PR, or wants to validate changes across security, correctness, tests, and documentation. Invoke with /review or when the user says "review this" or "is this ready to merge".
 ---
 
 # Code Review

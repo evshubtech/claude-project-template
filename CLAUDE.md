@@ -13,6 +13,12 @@
 - `[build command]`
 - `[lint command]`
 
+## Mandatory Workflow Directives
+1. **Skill Discovery**: Before starting any non-trivial task, you MUST check the `.claude/skills/` directory and load the relevant expert skill(s). A task is "non-trivial" if it involves architecture, security, data modeling, cloud infra, or complex business logic.
+2. **Interactive Commands**: NEVER execute commands that require terminal confirmation or user input (e.g., `db:push`, `terraform apply`, interactive migrations). If a command requires confirmation, provide the exact command and ask the user to run it.
+3. **User Validation**: BEFORE every commit or PR, you MUST ask the user to manually test and validate the changes. Provide clear instructions on **what** to verify and **how** to verify (including specific paths, expected outputs, or test scripts).
+4. **Commit Protocol**: A task is only complete AFTER user validation. Do not assume success or commit without explicit confirmation that the user has verified the behavior.
+
 ## Conventions
 - Commits: Conventional Commits (feat:, fix:, chore:, docs:, refactor:)
 - Branches: feature/, fix/, chore/ prefixes
@@ -58,6 +64,8 @@ Sugerir Gemini CLI quando:
 
 - `[GEMINI ANALYSIS]` — análise arquitetural ou de codebase: usar diretamente como contexto de implementação, sem reprocessar
 - `[GEMINI SECURITY]` — findings de segurança: tratar por severidade (CRITICAL bloqueia merge, HIGH bloqueia PR)
+- `[GEMINI RESEARCH]` — fatos externos e documentação: seguir diretrizes de API/Docs pesquisadas pelo Gemini
+- `[GEMINI DOMAIN]` — regras de negócio: seguir lógica de domínio em Português
 
 O usuário já validou o output antes de trazer — não questionar a fonte, implementar a partir do contexto recebido.
 
@@ -65,7 +73,7 @@ O usuário já validou o output antes de trazer — não questionar a fonte, imp
 
 - `/gemini-analyze` — análise global ou por módulo via Gemini CLI
 - `/gemini-security` — revisão de segurança do diff ou módulo
-- `/gemini-sync` — gera bloco de atualização para o chat âncora
+- `/agents-sync` — gera bloco de atualização para os chats âncora
 
 ## Known Errors
 <!-- Format: ### Error title / Cause / Solution -->

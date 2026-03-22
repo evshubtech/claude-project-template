@@ -69,12 +69,18 @@ gemini -p "Map technical debt and architectural inconsistencies in this codebase
 
 ## Context Handoff
 
-When the user brings a Gemini output, it will be prefixed with:
+When the user brings a Gemini output, it will be prefixed with one of the following tags:
 
-- `[GEMINI ANALYSIS]` — architectural or codebase analysis
-- `[GEMINI SECURITY]` — security findings
+- `[GEMINI ANALYSIS]` — Architectural or structural analysis (Technical English).
+- `[GEMINI SECURITY]` — Security findings and risks (Technical English).
+- `[GEMINI RESEARCH]` — External facts, documentation, and search results (Technical English).
+- `[GEMINI DOMAIN]` — Business rules, logic, and domain constraints (Português de Negócio).
 
-Treat these as pre-validated context. Use them directly as input for implementation decisions without reprocessing. The user already reviewed the output before bringing it here.
+Treat these as pre-validated context. Use them directly as input for implementation decisions without reprocessing.
+
+### Language Strategy in Handoffs
+- **English**: For technical patterns, architecture, logic, and terminal commands.
+- **Português**: Para regras de negócio, fluxos de domínio, labels de interface e mensagens ao usuário.
 
 ## Anchor Chat Synchronization
 
@@ -84,4 +90,4 @@ Sync the Gemini Web anchor chat when:
 - GEMINI.md is updated with new architectural information
 - The project scope or domain changes materially
 
-Use `/gemini-sync` to generate the update block to paste into the anchor chat.
+Use `/agents-sync` to generate the update block to paste into the anchor chat.
