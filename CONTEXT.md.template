@@ -1,0 +1,101 @@
+<!--
+  CONTEXT.md — Memória Viva do Projeto
+  =====================================
+  Este arquivo é o "Norte" para qualquer IA que entre no projeto.
+  Deve ser atualizado ao início e fim de cada sessão de trabalho.
+
+  AMBIGUIDADE REGISTRADA:
+  - "Decisões críticas recentes" foi limitado a 5 itens conforme instrução,
+    mas o plano diretor não especifica janela de tempo. Adotei: últimas 2 semanas
+    ou últimas 5 decisões, o que vier primeiro.
+  - Link pro ADR assume que existe um diretório docs/adr/. Ajuste o caminho
+    conforme a estrutura real do repositório.
+-->
+
+# Estado do Projeto
+
+**Última atualização:** YYYY-MM-DD HH:MM
+**Atualizado por:** <!-- nome ou "Claude Code" / "Gemini CLI" -->
+
+---
+
+## Sprint Atual
+
+| Campo         | Valor                              |
+|---------------|------------------------------------|
+| **Número**    | Sprint ##                          |
+| **Objetivo**  | <!-- ex: Implementar autenticação JWT no FlowOps --> |
+| **Início**    | YYYY-MM-DD                         |
+| **Fim**       | YYYY-MM-DD                         |
+
+---
+
+## Decisões Críticas Recentes
+
+<!-- Máximo 5 itens. Formato: data · decisão resumida · link pro ADR -->
+
+<!-- Certifique-se de que docs/adr/ existe no projeto antes de referenciar ADRs aqui -->
+1. YYYY-MM-DD · <!-- Decisão 1 --> · [ADR-001](docs/adr/ADR-001.md)
+2. YYYY-MM-DD · <!-- Decisão 2 --> · [ADR-002](docs/adr/ADR-002.md)
+3. YYYY-MM-DD · <!-- Decisão 3 --> · [ADR-003](docs/adr/ADR-003.md)
+4. YYYY-MM-DD · <!-- Decisão 4 --> · [ADR-004](docs/adr/ADR-004.md)
+5. YYYY-MM-DD · <!-- Decisão 5 --> · [ADR-005](docs/adr/ADR-005.md)
+
+---
+
+## Bloqueios Ativos
+
+<!-- Se não houver bloqueios, escreva: "Nenhum bloqueio ativo." -->
+
+| ID       | Descrição                              | Responsável | Desde      |
+|----------|----------------------------------------|-------------|------------|
+| BLK-001  | <!-- ex: Aguardando credenciais AWS --> | Everton     | YYYY-MM-DD |
+
+---
+
+## Próxima Tarefa Prioritária do Backlog
+
+<!-- Copie o cabeçalho da tarefa com status PRONTO de maior prioridade do BACKLOG.md -->
+
+**ID:** TASK-XXX
+**Épico:** <!-- nome do épico pai -->
+**Resumo:** <!-- descrição em uma linha -->
+**Classificação LGPD:** <!-- PUBLICO / INTERNO / PESSOAL / SENSIVEL -->
+**Prompt pronto:** Sim / Não
+
+---
+
+## Exemplo Preenchido
+
+> ⚠️ Este bloco é apenas referência — remova antes de usar em produção.
+
+**Última atualização:** 2026-03-29 10:00
+**Atualizado por:** Claude Code
+
+### Sprint Atual (exemplo)
+
+| Campo      | Valor                                              |
+|------------|----------------------------------------------------|
+| Número     | Sprint 03                                          |
+| Objetivo   | Implementar autenticação JWT com multi-tenancy     |
+| Início     | 2026-03-24                                         |
+| Fim        | 2026-04-06                                         |
+
+### Decisões Críticas Recentes (exemplo)
+
+1. 2026-03-28 · Adotado Supabase RLS como única camada de isolamento B2B · [ADR-007](docs/adr/ADR-007.md)
+2. 2026-03-25 · Stack CORA será definida após mapeamento de regras de negócio · [ADR-006](docs/adr/ADR-006.md)
+
+### Bloqueios Ativos (exemplo)
+
+| ID      | Descrição                            | Responsável | Desde      |
+|---------|--------------------------------------|-------------|------------|
+| BLK-003 | Schema do Supabase ainda não migrado | Everton     | 2026-03-27 |
+
+### Próxima Tarefa Prioritária (exemplo)
+
+**ID:** TASK-012
+**Épico:** Auth & Multi-tenancy
+**Resumo:** Criar middleware de validação de `tenant_id` nas queries do FlowOps
+**Classificação LGPD:** INTERNO
+**Prompt pronto:** Sim

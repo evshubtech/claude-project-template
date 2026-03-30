@@ -1,0 +1,162 @@
+<!--
+  BACKLOG.md — Lista de Tarefas Atômicas
+  =======================================
+  Gerado pelo Gemini (Arquiteto). Consumido pelo Claude Code (Executor).
+
+  REGRA DE OURO (do PLANO_DIRETOR.md):
+  Cada tarefa deve ter no máximo 1 responsabilidade funcional
+  e alterar no máximo 1 arquivo principal de lógica.
+
+  IDIOMA:
+  - Campos e estrutura: inglês
+  - Conteúdo preenchido (descrições, critérios, bloqueios): português
+  - Prompt para o Claude Code: INGLÊS OBRIGATÓRIO — será consumido
+    diretamente pelo Claude Code sem tradução.
+
+  AMBIGUIDADES REGISTRADAS:
+  - "Épico pai" assume que épicos são definidos externamente (Gemini Web).
+    O nome aqui é apenas referência textual, sem link obrigatório.
+  - A ordem das tarefas define prioridade (topo = maior prioridade dentro
+    do status PRONTO). Reordene conforme necessário.
+  - O prompt deve ser auto-contido: incluir contexto suficiente para
+    execução sem consultar outros arquivos.
+-->
+
+# Backlog de Tarefas Atômicas
+
+**Última atualização:** YYYY-MM-DD
+
+---
+
+## Status possíveis
+
+`PRONTO` | `EM PROGRESSO` | `CONCLUIDO` | `BLOQUEADO`
+
+---
+
+## Tarefas
+
+<!--
+  Cole quantos blocos TASK forem necessários.
+  Mantenha ordenado por prioridade dentro de cada status.
+-->
+
+---
+
+### TASK-001
+
+**Épico pai:** <!-- ex: Auth & Multi-tenancy -->
+**Classificação LGPD:** <!-- PUBLICO | INTERNO | PESSOAL | SENSIVEL -->
+**Status:** <!-- PRONTO | EM PROGRESSO | CONCLUIDO | BLOQUEADO -->
+
+#### DoR — Definition of Ready
+
+- [ ] Contexto do épico injetado no CONTEXT.md
+- [ ] Critérios de aceite definidos abaixo
+- [ ] DoD definido abaixo
+- [ ] Classificação LGPD atribuída
+- [ ] Prompt em inglês, testado e auto-contido
+- [ ] Dependências identificadas: <!-- NENHUMA | TASK-XXX -->
+
+#### Prompt para o Claude Code
+
+> ⚠️ Escrever em inglês — consumido diretamente pelo Claude Code.
+
+```
+<!-- Estrutura obrigatória:
+
+Context: [sprint atual, o que já existe, arquivo de referência]
+
+Task: [o que deve ser feito — 1 responsabilidade]
+
+Files:
+- Modify: [arquivo principal]
+- Do NOT touch: [arquivos protegidos]
+
+LGPD Classification: [PUBLICO | INTERNO | PESSOAL | SENSIVEL]
+
+Constraints:
+- [restrição 1]
+- [restrição 2]
+-->
+```
+
+#### Critérios de Aceite
+
+- [ ] <!-- AC1 -->
+- [ ] <!-- AC2 -->
+- [ ] <!-- AC3 -->
+
+#### DoD — Definition of Done
+
+- [ ] Todos os critérios de aceite acima satisfeitos
+- [ ] Testes cobrindo caminho feliz e caminho de erro
+- [ ] Zero vulnerabilidades HIGH ou CRITICAL no SAST
+- [ ] Nenhum dado pessoal exposto em logs
+- [ ] Score de qualidade >= 7 no /task-done
+- [ ] SESSION_LOG.md atualizado
+
+#### Bloqueio (preencher apenas se status = BLOQUEADO)
+
+**Motivo:** <!-- descreva o bloqueio -->
+**Depende de:** <!-- TASK-XXX | decisão externa | recurso externo -->
+
+---
+
+## Exemplo Preenchido
+
+> ⚠️ Este bloco é apenas referência — remova antes de usar em produção.
+
+### TASK-012
+
+**Épico pai:** Auth & Multi-tenancy
+**Classificação LGPD:** INTERNO
+**Status:** PRONTO
+
+#### DoR — Definition of Ready
+
+- [x] Contexto do épico injetado no CONTEXT.md
+- [x] Critérios de aceite definidos abaixo
+- [x] DoD definido abaixo
+- [x] Classificação LGPD atribuída
+- [x] Prompt em inglês, testado e auto-contido
+- [x] Dependências identificadas: TASK-011 (JWT já implementado)
+
+#### Prompt para o Claude Code
+
+> ⚠️ Escrever em inglês — consumido diretamente pelo Claude Code.
+
+```
+Context: Sprint 03 — Auth & Multi-tenancy in FlowOps (B2B SaaS).
+JWT is already implemented in `src/middleware/auth.ts` (TASK-011 done).
+LGPD Classification: INTERNO — business account configuration data.
+
+Task: Add extraction and validation of `tenant_id` in the existing middleware.
+Every authenticated request must have `tenant_id` present in the JWT payload.
+If missing, return 403 with body `{ "error": "tenant_id_missing" }`.
+
+Files:
+- Modify: src/middleware/auth.ts
+- Do NOT touch: existing test cases in auth.test.ts
+
+Constraints:
+- Expose `tenant_id` as `req.tenantId` for use in downstream routes
+- Zero new external package dependencies
+- Add new test cases only — do not modify existing ones
+```
+
+#### Critérios de Aceite
+
+- [x] Requisições sem `tenant_id` no JWT retornam HTTP 403
+- [x] `tenant_id` é exposto em `req.tenantId` para uso nas rotas
+- [x] Cobertura de testes >= 80% para o middleware
+- [x] Nenhuma query de banco existente quebrada
+
+#### DoD — Definition of Done
+
+- [x] Todos os critérios de aceite acima satisfeitos
+- [x] Testes cobrindo caminho feliz e caminho de erro
+- [x] Zero vulnerabilidades HIGH ou CRITICAL no SAST
+- [x] Nenhum dado pessoal exposto em logs
+- [x] Score de qualidade >= 7 no /task-done
+- [x] SESSION_LOG.md atualizado

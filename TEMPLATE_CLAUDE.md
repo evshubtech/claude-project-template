@@ -13,6 +13,12 @@
 - `[build command]`
 - `[lint command]`
 
+## Security Tools
+
+SAST tool for this project: <!-- ex: bandit / npm audit / tsc -->
+Run command: <!-- ex: bandit -r ./src -->
+Block threshold: HIGH, CRITICAL
+
 ## Mandatory Workflow Directives
 1. **Skill Discovery**: Before starting any non-trivial task, you MUST check the `.claude/skills/` directory and load the relevant expert skill(s). A task is "non-trivial" if it involves architecture, security, data modeling, cloud infra, or complex business logic.
 2. **Interactive Commands**: NEVER execute commands that require terminal confirmation or user input (e.g., `db:push`, `terraform apply`, interactive migrations). If a command requires confirmation, provide the exact command and ask the user to run it.
@@ -77,3 +83,15 @@ O usuário já validou o output antes de trazer — não questionar a fonte, imp
 
 ## Known Errors
 <!-- Format: ### Error title / Cause / Solution -->
+
+## Idioma
+
+- Código: inglês (variáveis, funções, schemas, commits, nomes de arquivo)
+
+- Instruções para modelos (skills, commands, CLAUDE.md, GEMINI.md, prompts no BACKLOG.md): inglês
+
+- Documentação de revisão humana (SESSION_LOG.md, conteúdo do CONTEXT.md, critérios de aceite, ADRs, comentários de decisão): português
+
+- Híbrido (BACKLOG.md): campos e estrutura em inglês, conteúdo preenchido em português
+
+- Em caso de dúvida: se um humano vai ler pra decidir → português. Se um modelo vai ler pra executar → inglês.

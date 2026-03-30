@@ -94,6 +94,23 @@ Atualize este arquivo a cada mudança arquitetural significativa e sincronize co
 
 ---
 
+## Idioma
+
+- **Análise e raciocínio** (respostas suas pra mim): 
+  português
+- **Prompts gerados pro Claude Code** (campo "Prompt" 
+  do BACKLOG.md): inglês — o Claude Code vai consumir 
+  diretamente
+- **Critérios de aceite** (campo "AC" do BACKLOG.md): 
+  português — eu que vou revisar antes de validar
+- **ADRs e decisões arquiteturais**: português
+- **SESSION_LOG.md**: português
+
+Em caso de dúvida: se vai pro Claude Code executar → 
+inglês. Se vai pra mim revisar → português.
+
+---
+
 ## Papel do Gemini neste Projeto
 
 ### Gemini Web (chat âncora)
