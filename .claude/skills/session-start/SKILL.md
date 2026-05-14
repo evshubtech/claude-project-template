@@ -13,7 +13,7 @@ If not found, stop and report:
 > "CONTEXT.md not found. Create it from CONTEXT.md.template before starting the session."
 
 Display:
-- Current sprint number and objective
+- Current epic number and objective
 - Last updated date
 - Active blockers (count + short list, or "None")
 
@@ -57,6 +57,8 @@ Ask the user:
 
 > "Confirm we will work on **[TASK-XXX] — [description]**? (yes / no)"
 
-- **Yes:** display the full "Prompt para o Claude Code" field from BACKLOG.md for the selected task.
+- **Yes:**
+  a. Update the task status in BACKLOG.md: **Status:** PRONTO  →  **Status:** EM PROGRESSO
+  b. Display the full "Prompt para o Executor" field from BACKLOG.md for the selected task.
 - **No:** ask "Which task do you want to work on? Provide the ID (e.g. TASK-XXX).", then repeat the summary and confirmation for that task.
 

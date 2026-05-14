@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+coverage/
+
+# Environment & secrets
+.env
+.env.*
+*.pem
+*.key
+secrets/
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Terraform state (sensitive)
+*.tfstate
+*.tfstate.backup
+.terraform/
+
+# Large data files
+*.csv
+*.parquet
+*.json.gz
+data/raw/

@@ -1,7 +1,7 @@
 <!--
   BACKLOG.md — Lista de Tarefas Atômicas
   =======================================
-  Gerado pelo Gemini (Arquiteto). Consumido pelo Claude Code (Executor).
+  Gerado pelo Gemini (Arquiteto). Consumido pelo Claude Code ou Codex CLI (Executores).
 
   REGRA DE OURO (do PLANO_DIRETOR.md):
   Cada tarefa deve ter no máximo 1 responsabilidade funcional
@@ -10,8 +10,8 @@
   IDIOMA:
   - Campos e estrutura: inglês
   - Conteúdo preenchido (descrições, critérios, bloqueios): português
-  - Prompt para o Claude Code: INGLÊS OBRIGATÓRIO — será consumido
-    diretamente pelo Claude Code sem tradução.
+  - Prompt para o executor: INGLÊS OBRIGATÓRIO — será consumido
+    diretamente pelo Claude Code ou Codex CLI sem tradução.
 
   AMBIGUIDADES REGISTRADAS:
   - "Épico pai" assume que épicos são definidos externamente (Gemini CLI).
@@ -58,9 +58,9 @@
 - [ ] Prompt em inglês, testado e auto-contido
 - [ ] Dependências identificadas: <!-- NENHUMA | TASK-XXX -->
 
-#### Prompt para o Claude Code
+#### Prompt para o Executor
 
-> ⚠️ Escrever em inglês — consumido diretamente pelo Claude Code.
+> ⚠️ Escrever em inglês — consumido diretamente pelo Claude Code ou Codex CLI.
 
 ```
 <!-- Estrutura obrigatória:
@@ -93,7 +93,7 @@ Constraints:
 - [ ] Testes cobrindo caminho feliz e caminho de erro
 - [ ] Zero vulnerabilidades HIGH ou CRITICAL no SAST
 - [ ] Nenhum dado pessoal exposto em logs
-- [ ] Score de qualidade >= 7 no /task-done
+- [ ] Score de qualidade >= 7 no closeout do executor
 - [ ] SESSION_LOG.md atualizado
 
 #### Bloqueio (preencher apenas se status = BLOQUEADO)
@@ -122,9 +122,9 @@ Constraints:
 - [x] Prompt em inglês, testado e auto-contido
 - [x] Dependências identificadas: TASK-011 (JWT já implementado)
 
-#### Prompt para o Claude Code
+#### Prompt para o Executor
 
-> ⚠️ Escrever em inglês — consumido diretamente pelo Claude Code.
+> ⚠️ Escrever em inglês — consumido diretamente pelo Claude Code ou Codex CLI.
 
 ```
 Context: Sprint 03 — Auth & Multi-tenancy in FlowOps (B2B SaaS).
@@ -158,5 +158,5 @@ Constraints:
 - [x] Testes cobrindo caminho feliz e caminho de erro
 - [x] Zero vulnerabilidades HIGH ou CRITICAL no SAST
 - [x] Nenhum dado pessoal exposto em logs
-- [x] Score de qualidade >= 7 no /task-done
+- [x] Score de qualidade >= 7 no closeout do executor
 - [x] SESSION_LOG.md atualizado

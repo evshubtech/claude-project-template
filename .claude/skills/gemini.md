@@ -91,3 +91,58 @@ Sync the Gemini Web anchor chat when:
 - The project scope or domain changes materially
 
 Use `/agents-sync` to generate the update block to paste into the anchor chat.
+
+## Gemini CLI — Command Reference
+
+### Full codebase analysis
+
+```bash
+gemini -p "$(cat GEMINI.md)
+
+Analyze this codebase with focus on:
+1. Architectural consistency with the decisions documented above
+2. Technical debt: duplicated logic, unclear responsibilities, high coupling
+3. Naming and structural inconsistencies across modules
+4. Missing abstractions or over-engineered areas
+
+$(find src -type f | sort | xargs cat 2>/dev/null)"
+```
+
+### Security review — current diff
+
+```bash
+git diff | gemini -p "You are a security reviewer. Analyze this diff for:
+
+1. OWASP Top 10 vulnerabilities
+2. Multi-tenancy: any path that could expose cross-tenant data
+3. Secrets and credentials: hardcoded tokens, keys, passwords, or connection strings
+4. Input validation: unvalidated or unsanitized inputs reaching sensitive operations
+5. Authorization: missing or bypassable permission checks
+
+For each finding:
+- Severity: CRITICAL / HIGH / MEDIUM / LOW
+- Location: file and line reference
+- Description: what the issue is
+- Recommendation: specific fix"
+```
+
+### Output prefixes
+
+- `[GEMINI ANALYSIS]` — architectural analysis: use as implementation context in Claude Code, do not reprocess
+- `[GEMINI SECURITY]` — findings: CRITICAL blocks merge, HIGH blocks PR, MEDIUM fix in this epic
+
+### Severity guide
+
+```
+┌──────────┬─────────────────────────────────────────────────────────┐
+│ Severity │                         Action                          │
+├──────────┼─────────────────────────────────────────────────────────┤
+│ CRITICAL │ Block merge. Fix before any commit.                     │
+├──────────┼─────────────────────────────────────────────────────────┤
+│ HIGH     │ Fix before opening PR.                                  │
+├──────────┼─────────────────────────────────────────────────────────┤
+│ MEDIUM   │ Fix in this epic. Add to tech debt backlog if deferred. │
+├──────────┼─────────────────────────────────────────────────────────┤
+│ LOW      │ Fix when touching the area. Document if deferring.      │
+└──────────┴─────────────────────────────────────────────────────────┘
+```

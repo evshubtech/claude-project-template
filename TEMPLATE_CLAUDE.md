@@ -20,10 +20,13 @@ Run command: <!-- ex: bandit -r ./src -->
 Block threshold: HIGH, CRITICAL
 
 ## Mandatory Workflow Directives
+
 1. **Skill Discovery**: Before starting any non-trivial task, you MUST check the `.claude/skills/` directory and load the relevant expert skill(s). A task is "non-trivial" if it involves architecture, security, data modeling, cloud infra, or complex business logic.
-2. **Interactive Commands**: NEVER execute commands that require terminal confirmation or user input (e.g., `db:push`, `terraform apply`, interactive migrations). If a command requires confirmation, provide the exact command and ask the user to run it.
-3. **User Validation**: BEFORE every commit or PR, you MUST ask the user to manually test and validate the changes. Provide clear instructions on **what** to verify and **how** to verify (including specific paths, expected outputs, or test scripts).
-4. **Commit Protocol**: A task is only complete AFTER user validation. Do not assume success or commit without explicit confirmation that the user has verified the behavior.
+2. **Plan Mode Usage**: For complex or non-trivial tasks (new features, multi-file refactors), you are STRONGLY ENCOURAGED to use `plan_mode` to research and map dependencies before implementation. Tasks marked with `[STRATEGIC]` in `BACKLOG.md` MANDATE the use of Plan Mode.
+3. **Interactive Commands**: NEVER execute commands that require terminal confirmation or user input (e.g., `db:push`, `terraform apply`, interactive migrations). Provide the exact command and ask the user to run it.
+4. **User Validation**: BEFORE every commit, you MUST ask the user to manually test and validate the changes. Always state the prerequisites (what must be running: dev server, build, containers) BEFORE listing the test steps. Provide clear instructions on **what** to verify and **how** (paths, expected outputs, test scripts).
+5. **Commit Protocol**: A task is only complete AFTER user validation and Gate 0 approval from Gemini CLI. Do not commit without explicit confirmation.
+6. **Error Recovery**: If an execution error occurs (build failure, test crash, command error), you are allowed a maximum of **2 autonomous fix attempts**. If the 3rd attempt also fails, stop and generate a 'Gemini Debug Brief' containing: 1) The error log, 2) Root cause hypothesis, 3) List of previous failed attempts. This brief is for the user to consult Gemini CLI.
 
 ## Conventions
 - Commits: Conventional Commits (feat:, fix:, chore:, docs:, refactor:)
@@ -35,72 +38,100 @@ Block threshold: HIGH, CRITICAL
 - Migration files already applied
 - [other critical files/folders]
 
-## Hybrid Workflow — Gemini
+## Context Loading Order
 
-Este projeto usa um fluxo híbrido entre Claude Code (Engenheiro) e Gemini CLI (Arquiteto/Auditor). Consulte `GEMINI.md` para o contexto técnico completo do projeto.
+Load context in this order unless the user asks for a narrower task:
 
-### Papel do Gemini CLI (terminal)
+1. `AGENTS.md`
+2. `CLAUDE.md` (this file)
+3. `CONTEXT.md` — current project state
+4. `BACKLOG.md` — active atomic task
+5. Latest relevant block in `SESSION_LOG.md`
+6. Relevant skills only (`.claude/skills/`)
+7. Target source files and tests
 
-Invocar para planejamento, decisões arquiteturais e análise profunda do codebase:
-- `/discovery` — elicitação de domínio e regras de negócio
-- `/breakdown` — decomposição de features em tarefas atômicas
-- `/adr` — registro de decisões arquiteturais
-- `/review` — revisão técnica de tarefas críticas (Gate 0)
-- `/sync` — atualização de contexto e logs de sessão
-- `/gemini-analyze` — análise global do repositório sem chunkar
-- `/gemini-security` — revisão de segurança ampla (OWASP, secrets)
+Do not load every skill or every memory file by default. Prefer targeted reads and summarize large context before acting.
 
-### Quando sugerir ativamente consultar o Gemini CLI
+---
 
-Sugerir Gemini CLI quando o usuário:
-- Pergunta como estruturar/modelar algo não trivial
-- Levanta questões de compliance ou regulação
-- Está prestes a tomar uma decisão arquitetural que afeta múltiplos módulos
-- Quer uma revisão de segurança ampla do codebase
-- Há perguntas sobre consistência de padrões entre muitos arquivos
+## Subdirectory AGENTS.md Pattern
 
-### Como tratar outputs prefixados
+Use subdirectory `AGENTS.md` files only when local rules differ from the root. Good candidates:
 
-- `[GEMINI ANALYSIS]` — análise arquitetural ou de codebase: usar diretamente como contexto de implementação, sem reprocessar
-- `[GEMINI SECURITY]` — findings de segurança: tratar por severidade (CRITICAL bloqueia merge, HIGH bloqueia PR)
-- `[GEMINI RESEARCH]` — fatos externos e documentação: seguir diretrizes de API/Docs pesquisadas pelo Gemini
-- `[GEMINI DOMAIN]` — regras de negócio: seguir lógica de domínio em Português
+- `src/AGENTS.md`: module boundaries, test commands, domain constraints.
+- `tests/AGENTS.md`: fixture rules, test style, data handling.
+- `infra/AGENTS.md`: Terraform/state safety, cloud account boundaries.
+- `docs/AGENTS.md`: ADR conventions and documentation language.
 
-O usuário já validou o output antes de trazer — não questionar a fonte, implementar a partir do contexto recebido.
+Subdirectory instructions should be short, operational, and scoped to that tree. Put reusable procedures in skills, not in every directory instruction file.
 
-### Commands disponíveis
+---
 
-- `/gemini-analyze` — análise global ou por módulo via Gemini CLI
-- `/gemini-security` — revisão de segurança do diff ou módulo
-- `/sync` — atualização de contexto (CONTEXT.md) e logs (SESSION_LOG.md)
+## Hybrid Workflow — Gemini CLI
+
+This project uses a multi-agent workflow. See `GEMINI.md` and `AGENTS.md` for the full technical context. The user is the bridge between agents — Claude never calls Gemini or Codex directly.
+
+- **Gemini CLI:** Architect & Auditor — planning, discovery, ADRs, security review.
+- **Claude Code:** Senior Engineer — implementation, tests, commit gates.
+- **Codex CLI:** Operational Executor — terminal-driven implementation, diff review, focused patches.
+
+### Gemini CLI role
+
+Invoke for planning, architectural decisions and deep codebase analysis:
+- `/discovery` — domain elicitation and business rules
+- `/breakdown` — feature decomposition into atomic tasks
+- `/adr` — architectural decision records
+- `/review` — pre-commit technical review (Gate 0)
+- `/sync` — update CONTEXT.md and SESSION_LOG.md
+- `/gemini-analyze` — global repository analysis (see `.claude/skills/gemini.md` for commands)
+- `/gemini-security` — broad security review (see `.claude/skills/gemini.md` for commands)
+
+### When to actively suggest Gemini CLI
+
+- User asks how to structure something non-trivial
+- Architectural decision affecting multiple modules
+- Compliance or regulation question
+- Broad codebase security review needed
+- Inconsistencies across many files
+
+### How to handle prefixed outputs
+
+- `[GEMINI ANALYSIS]` — architectural analysis: use directly as implementation context, do not reprocess
+- `[GEMINI SECURITY]` — findings: CRITICAL blocks merge, HIGH blocks PR
+- `[GEMINI DOMAIN]` — business rules in Portuguese: follow the defined domain logic
+
+The user has already validated the output before bringing it — do not question the source, implement from the received context.
+
+### Available commands
+
+- `/gemini-analyze` — global or module analysis via Gemini CLI
+- `/gemini-security` — security review of diff or module
+- `/sync` — update CONTEXT.md and SESSION_LOG.md
 
 ## Known Errors
+
 <!-- Format: ### Error title / Cause / Solution -->
+<!-- Only add real errors encountered during development — no assumptions -->
 
-## Idioma
+## Language
 
-- Código: inglês (variáveis, funções, schemas, commits, nomes de arquivo)
-
-- Instruções para modelos (skills, commands, CLAUDE.md, GEMINI.md, prompts no BACKLOG.md): inglês
-
-- Documentação de revisão humana (SESSION_LOG.md, conteúdo do CONTEXT.md, critérios de aceite, ADRs, comentários de decisão): português
-
-- Híbrido (BACKLOG.md): campos e estrutura em inglês, conteúdo preenchido em português
-
-- Em caso de dúvida: se um humano vai ler pra decidir → português. Se um modelo vai ler pra executar → inglês.
+- **Code:** English (variables, functions, schemas, commits, filenames)
+- **Model instructions** (skills, commands, CLAUDE.md, GEMINI.md, BACKLOG.md prompts): English
+- **Human review docs** (SESSION_LOG.md, CONTEXT.md content, acceptance criteria, ADRs): Portuguese
+- **BACKLOG.md:** hybrid — fields and structure in English, content filled in Portuguese
+- **Rule of thumb:** if a human reads it to decide → Portuguese. If a model reads it to execute → English.
 
 ## Security Setup
 
-MULTI_TENANT: <!-- true | false -->
-SECURITY_TOOL: <!-- ex: njsscan . && npm audit && tsc --noEmit -->
-ADR_PATH: <!-- ex: docs/decisions/ -->
-AUTH_METHOD: <!-- ex: JWT -->
-SENSITIVE_DATA: <!-- ex: email, nome do usuário -->
+MULTI_TENANT:
+SECURITY_TOOL:
+ADR_PATH:
+AUTH_METHOD:
 
 ## Privacy Setup
 
-LEGAL_BASIS: <!-- contrato | consentimento | legítimo interesse | obrigação legal -->
-DATA_SUBJECTS: <!-- ex: funcionários de empresas clientes -->
-PII_FIELDS: <!-- ex: nome, email, cargo -->
-RETENTION: <!-- ex: vigência do contrato + 5 anos -->
-REGULATORY: <!-- ex: ANPD | IBAMA | ANM | FEAM | IEF -->
+LEGAL_BASIS:
+DATA_SUBJECTS:
+PII_FIELDS:
+RETENTION:
+REGULATORY:

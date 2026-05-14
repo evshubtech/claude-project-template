@@ -6,6 +6,7 @@
 
   QUEM ESCREVE: 
   - Claude Code, ao executar /task-done (etapa final) -> Prefixo [CLAUDE]
+  - Codex CLI, ao concluir uma tarefa de implementação -> Prefixo [CODEX]
   - Gemini CLI, ao executar /sync (planejamento/revisão) -> Prefixo [GEMINI]
 
   AMBIGUIDADES REGISTRADAS:
@@ -50,7 +51,43 @@
 ### Próximo Passo
 
 **Tarefa:** TASK-XXX — <!-- descrição em uma linha do backlog -->
-**Observação:** <!-- contexto para a próxima sessão do Claude -->
+**Observação:** <!-- contexto para a próxima sessão do executor -->
+
+---
+
+## [CODEX] Sessão YYYY-MM-DD HH:MM
+
+**Sprint:** Sprint ##
+**Branch:** <!-- ex: feat/TASK-001-tenant-middleware -->
+**Tarefa:** TASK-XXX — <!-- descrição em uma linha -->
+**Score Gate 1:** X.X/10
+**Executado por:** Codex CLI
+
+### Implementado
+
+<!-- Resumo técnico do que foi codificado, arquivos alterados e testes rodados. -->
+
+### O que Falhou e Por Quê
+
+<!-- 
+  Descreva falhas de execução, bloqueios, comandos que não funcionaram, 
+  ou por que o score foi baixo inicialmente. 
+  Se nenhuma falha: "Nenhuma falha registrada."
+-->
+
+### Decisões Tomadas
+
+<!-- 
+  Decisões técnicas locais de implementação. 
+  Se nenhuma: "Nenhuma decisão nova."
+-->
+
+1. <!-- Decisão 1 · motivo · impacto -->
+
+### Próximo Passo
+
+**Tarefa:** TASK-XXX — <!-- descrição em uma linha do backlog -->
+**Observação:** <!-- contexto para a próxima sessão do executor -->
 
 ---
 
@@ -79,6 +116,6 @@
 ### Próximo Passo
 
 **Tarefa:** TASK-XXX — <!-- descrição em uma linha do backlog -->
-**Observação:** <!-- o que o Claude deve focar na próxima implementação -->
+**Observação:** <!-- o que o executor deve focar na próxima implementação -->
 
 ---

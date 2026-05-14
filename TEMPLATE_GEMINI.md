@@ -12,15 +12,16 @@ Atualize este arquivo a cada mudança arquitetural significativa e sincronize vi
 ---
 
 ## Mandatory Workflow Directives
-1. **Skill Discovery**: Before providing strategic advice, security audits, or architectural reviews, you MUST consult the relevant skill in `.gemini/skills/`. This ensures all recommendations follow the project's specialized expert guidelines.
-2. **Interactive Commands**: NEVER ask the user to execute commands that require confirmation via Gemini CLI if the agent cannot handle them directly. Prefer asking the user to run them in their terminal.
-3. **User Validation**: When proposing architectural changes or security fixes, always provide a validation strategy. Tell the user **what** to test and **how** to confirm the fix before they bring it to Claude Code for implementation.
+
+1. **Plan Mode Strategy**: Gemini MUST use `enter_plan_mode` for all **Discovery**, **Threat Modeling**, and **Breakdown** sessions. This ensures deep research before task creation. Executors (Claude/Codex) are also strongly encouraged to use Plan Mode for complex, multi-file tasks.
+2. **Usability Sandbox**: Before finalizing the breakdown of a new epic, Gemini MUST imagine the end-to-end user journey. Identify UX gaps, missing confirmation steps, or edge cases in the interaction flow before implementation starts.
+3. **Skill Discovery**: Before providing strategic advice, security audits, or architectural reviews, you MUST consult the relevant skill in `.gemini/skills/`. This ensures all recommendations follow the project's specialized expert guidelines.
+4. **Interactive Commands**: NEVER ask the user to execute commands that require confirmation via Gemini CLI if the agent cannot handle them directly. Prefer asking the user to run them in their terminal.
+5. **User Validation**: When proposing architectural changes or security fixes, always provide a validation strategy. Tell the user **what** to test and **how** to confirm the fix before they bring it to the active executor for implementation.
 
 ---
 
 ## Stack
-... [rest of the file remains similar but with command updates] ...
-
 
 - Language: [ex: Python / TypeScript]
 - Framework: [ex: FastAPI / Express.js]
@@ -96,18 +97,13 @@ Atualize este arquivo a cada mudança arquitetural significativa e sincronize vi
 
 ## Idioma
 
-- **Análise e raciocínio** (respostas suas pra mim): 
-  português
-- **Prompts gerados pro Claude Code** (campo "Prompt" 
-  do BACKLOG.md): inglês — o Claude Code vai consumir 
-  diretamente
-- **Critérios de aceite** (campo "AC" do BACKLOG.md): 
-  português — eu que vou revisar antes de validar
-- **ADRs e decisões arquiteturais**: português
-- **SESSION_LOG.md**: português
+- **Análise e raciocínio** (respostas suas pra mim): português
+- **Prompts gerados pro executor** (campo "Prompt" do BACKLOG.md): inglês — **Claude Code** ou **OpenAI Codex** vão consumir diretamente.
+- **Critérios de aceite** (campo "AC" do BACKLOG.md): português — eu que vou revisar antes de validar.
+- **ADRs e decisões arquiteturais**: português.
+- **SESSION_LOG.md**: português.
 
-Em caso de dúvida: se vai pro Claude Code executar → 
-inglês. Se vai pra mim revisar → português.
+Em caso de dúvida: se vai pro executor executar → inglês. Se vai pra mim revisar → português.
 
 ---
 
@@ -118,29 +114,31 @@ Utilize estes comandos para guiar o comportamento do Gemini em diferentes fases 
 ### Gate Structure
 
 - **Gate 0** → Gemini `/review` (pre-commit validation)
-- **Gate 1** → Claude `/task-done` (quality scoring)
-- **Gate 2** → Claude `/task-done` (SAST)
-- **Gate 3** → Claude `/task-done` (commit)
+- **Gate 1** → Active executor closeout (quality scoring)
+- **Gate 2** → Active executor closeout (SAST)
+- **Gate 3** → Explicit human confirmation before commit
 
-The user is responsible for running `/task-done` only after Gate 0 is approved.
+The user is responsible for running the active executor closeout flow only after Gate 0 is approved.
 
 ### `/discovery`
 - **Quando:** Início de um novo projeto, épico ou módulo complexo.
-- **Comportamento:** Faça perguntas estruturadas para entender o domínio, entidades, regras de negócio e fluxos críticos. Foque em elicitação de requisitos e mapeamento de dependências.
+- **Comportamento:** Faça perguntas estruturadas para entender o domínio, entidades, regras de negócio e fluxos críticos. Foque em eliciação de requisitos e mapeamento de dependências.
 - **Output:** Documento de domínio estruturado com entidades, regras de negócio, fluxos críticos e lacunas de conhecimento identificadas.
-- **NÃO fazer:** Propor arquitetura, tecnologias ou criar tarefas antes de consolidar o entendimento do domínio.
+
+### `/threat-model`
+- **Quando:** Antes de iniciar o `/breakdown` de um épico.
+- **Comportamento:** Atue como um "Red Team". Identifique até 4 vetores de ataque reais baseados na arquitetura proposta (ex: Sessão, Privilégios, Multi-tenancy, Injeção).
+- **Output:** Lista de riscos identificados e mitigações técnicas propostas para serem incluídas nas tarefas do backlog.
 
 ### `/breakdown`
-- **Quando:** Após a fase de discovery ou quando um épico/feature precisa ser decomposto para execução.
+- **Quando:** Após a fase de discovery/threat-model ou quando um épico/feature precisa ser decomposto para execução.
 - **Comportamento:** Quebrar o épico em features e, em seguida, em **tarefas atômicas**. Cada tarefa deve seguir o template do `BACKLOG.md` (Prompt em inglês, ACs em português, classificação LGPD).
 - **Regra de Ouro:** Máximo 1 responsabilidade funcional por tarefa; alteração de no máximo 1 arquivo principal de lógica por tarefa.
-- **Output:** Blocos de tarefas formatados para inserção direta no `BACKLOG.md`.
-- **NÃO fazer:** Gerar tarefas monolíticas, misturar refatoração com novas features ou ignorar a classificação de dados.
 
 ### `/review`
-- **Quando:** Após implementação do Claude Code e teste manual do usuário — ANTES de executar `/task-done`.
+- **Quando:** Após implementação do executor e teste manual do usuário — ANTES de executar o fluxo de closeout.
 - **Comportamento:** Analisar `git status` + `git diff` da task em questão e fornecer parecer técnico com score estruturado.
-- **Validação LGPD:** Antes de avaliar, leia a Classificação LGPD da task no `BACKLOG.md` e verifique se o código respeita as regras da skill de `privacy` para essa classificação (ex: mascaramento de PII, retenção, base legal).
+- **Arquitetura:** Declare explicitamente se a tarefa gerou uma "Decisão Arquitetural Significativa" que exija um ADR.
 - **Rubrica de Avaliação:**
   | Critério | Peso |
   |---|---|
@@ -149,34 +147,28 @@ The user is responsible for running `/task-done` only after Gate 0 is approved.
   | Qualidade e estilo do código | 3 |
 - **Score:** 0–10. Threshold ≥ 7 para aprovar.
 - **Decisão:**
-  - **Se score ≥ 7:** APROVADO — usuário executa `/task-done`.
-  - **Se score < 7:** REPROVADO — gerar brief de correção com o que falhou e o que precisa ser ajustado. O usuário passa o brief pro Claude corrigir. Após correção, `/review` é executado novamente.
-- **Brief de Correção (Score < 7):** Gerar em INGLÊS no formato de prompt direto para o Claude:
+  - **Se score ≥ 7:** APROVADO — usuário executa o closeout do executor ativo.
+  - **Se score < 7:** REPROVADO — gerar um **Correction Brief** (em Inglês).
+- **Standard Correction Brief Format (English):**
   ```
-  Context: [task context]
-  Problem found: [what failed in the review]
-  Required fix: [what needs to be corrected]
-  Acceptance criteria to revalidate:
-  - [criterion 1]
-  - [criterion 2]
+  ### Correction Brief for [TASK-ID]
+  **Problem:** [Concise description of the failure]
+  **Root Cause:** [Why it failed]
+  **Required Fix:** [Specific technical instructions to correct]
+  **Acceptance Criteria to Revalidate:**
+  - [ ] [AC 1]
+  - [ ] [AC 2]
   ```
-- **Escopo FECHADO:** Avaliar estritamente o que foi implementado na task. Não propor mudanças fora do escopo, não editar arquivos diretamente.
-- **Output:** Score detalhado + Decisão (APROVADO/REPROVADO) + brief de correção se reprovado.
 
 ### `/adr`
-- **Quando:** Sempre que uma decisão arquitetural significativa for tomada (vinda de discussão, discovery ou necessidade técnica).
-- **Comportamento:** Receba o contexto da decisão (contexto, decisão, trade-offs) e gere o bloco formatado seguindo o padrão ADR do projeto.
-- **Output:** Bloco ADR formatado em Markdown pronto para ser adicionado em `docs/decisions/`.
-- **NÃO fazer:** Tomar a decisão arquitetural por conta própria sem o input/validação explícita do usuário.
+- **Quando:** Sempre que uma decisão arquitetural significativa for tomada.
+- **Comportamento:** Receba o contexto da decisão e gere o bloco formatado seguindo o padrão ADR do projeto.
 
 ### `/sync`
-- **Quando:** Ao final de cada sessão de trabalho com o Gemini CLI para garantir a continuidade, ou após o `/discovery` inicial para consolidar o estado.
-- **Guia de Uso Inicial:** Quando usado após o `/discovery`, consolide as entidades, regras de negócio e decisões identificadas no `CONTEXT.md` como o estado inicial do projeto.
-- **Comportamento:** Foque no "Pulso" do projeto. Atualize o `CONTEXT.md` (Sprint, decisões críticas, bloqueios) para refletir o entendimento atual.
-- **Log de Sessão:** Gere o bloco de log para o `SESSION_LOG.md` prefixado com `[GEMINI]`. Registre apenas atividades de planejamento, breakdown ou revisão — nunca de implementação.
-- **Idioma:** Português (arquivos de revisão humana).
-- **Output:** Blocos de atualização para `CONTEXT.md` e `SESSION_LOG.md`.
-- **NÃO fazer:** Modificar o `BACKLOG.md` ou arquivos de código diretamente durante o sync.
+- **Quando:** Ao final de cada sessão de trabalho com o Gemini CLI.
+- **Acompanhamento de Roadmap:** Verifique o progresso das tarefas no `BACKLOG.md`. Se todas as tarefas de um item do `ROADMAP.md` estiverem CONCLUIDO, marque o item no roadmap.
+- **Log de Sessão:** Gere o bloco de log para o `SESSION_LOG.md` prefixado com `[GEMINI]`.
+- **Output:** Blocos de atualização para `CONTEXT.md`, `ROADMAP.md` e `SESSION_LOG.md`.
 
 ---
 
@@ -184,47 +176,90 @@ The user is responsible for running `/task-done` only after Gate 0 is approved.
 
 ### Gemini CLI (Arquiteto & Auditor)
 
-O Gemini CLI é o canal único para planejamento, decisões estratégicas e auditoria profunda do codebase:
-
-**Discovery & Planejamento (antes de implementar):**
-- Análise de domínio e modelagem DDD
-- Decisões arquiteturais e trade-offs
-- Compliance e raciocínio regulatório
-- Pesquisa com Google Search grounding
-- Análise de PDFs técnicos e diagramas de arquitetura
-- Brainstorming e exploração de soluções alternativas
-
-**Análise do Codebase & Auditoria:**
-- Análise global do repositório com janela de 1M tokens
-- Revisão de segurança (OWASP, multi-tenancy, secrets)
-- Mapeamento de débito técnico e inconsistências arquiteturais
-- Validação de conformidade com as convenções do projeto
+O Gemini CLI é o canal único para planejamento, decisões estratégicas e auditoria profunda do codebase.
 
 ---
 
-## O que NÃO delegar ao Gemini
+## Agent Roles
+- **Gemini CLI:** architecture, discovery, ADRs, broad codebase analysis, and security review.
+- **Claude Code:** Claude-native implementation workflows, commands, hooks, and commit gates.
+- **Codex CLI:** terminal-driven implementation, refactoring, focused review, validation, and template evolution.
+- **Future agents:** consume the same shared memory files and obey the same repository boundaries.
 
-- Geração de código que vai direto ao repositório
-- Decisões de segurança críticas de implementação
-- Correções de bugs pontuais e refatorações locais
-- Testes unitários e de integração
-- Git flow e commits
+## Context Loading Order
+
+Load context in this order unless the user asks for a narrower task:
+
+1. `AGENTS.md`
+2. `GEMINI.md` (this file)
+3. `CONTEXT.md` — current project state
+4. `BACKLOG.md` — active atomic task
+5. Latest relevant block in `SESSION_LOG.md`
+6. Relevant skills only (`.gemini/skills/`)
+7. Target source files and tests
+
+Do not load every skill or every memory file by default. Prefer targeted reads and summarize large context before acting.
+
+---
+
+## Skill Boundaries
+
+- `.codex/skills/`: Codex-native reusable procedures.
+- `.claude/skills/`: Claude-native reusable procedures and command-style workflows.
+- `.gemini/skills/`: Gemini-native strategic analysis, architecture audit, domain modeling, UX review, and QA strategy procedures.
+
+---
+
+## Subdirectory AGENTS.md Pattern
+
+Use subdirectory `AGENTS.md` files only when local rules differ from the root. Good candidates:
+
+- `src/AGENTS.md`: module boundaries, test commands, domain constraints.
+- `tests/AGENTS.md`: fixture rules, test style, data handling.
+- `infra/AGENTS.md`: Terraform/state safety, cloud account boundaries.
+- `docs/AGENTS.md`: ADR conventions and documentation language.
+
+Subdirectory instructions should be short, operational, and scoped to that tree. Put reusable procedures in skills, not in every directory instruction file.
 
 ---
 
 ## Passagem de Contexto
 
-Outputs do Gemini chegam ao Claude Code prefixados com:
+Outputs do Gemini chegam ao executor ativo (**Claude Code** ou **OpenAI Codex**) prefixados com:
 
 - `[GEMINI ANALYSIS]` — análise arquitetural ou de codebase
 - `[GEMINI SECURITY]` — findings de segurança
+- `[GEMINI RESEARCH]` — resultados de pesquisa externa
+- `[GEMINI DOMAIN]` — regras de domínio em português
 
-O Claude Code usa esses outputs como contexto de implementação sem reprocessar — o usuário já validou antes de trazer.
+O executor usa esses outputs como contexto de implementação sem reprocessar.
+
+---
+
+## Security Setup
+
+```markdown
+### Security Configuration
+- **SAST Tool**: <!-- ex: bandit / npm audit -->
+- **Multi-tenant isolation logic**: <!-- ex: tenant_id in all queries / RLS -->
+- **Authentication**: <!-- ex: JWT / OAuth2 -->
+- **Critical Secrets Location**: <!-- ex: AWS Secrets Manager / .env (ignored) -->
+```
+
+## Privacy Setup (LGPD)
+
+```markdown
+### Data Privacy Configuration
+- **Legal Basis**: <!-- ex: Execução de Contrato / Consentimento -->
+- **PII Fields identified**: <!-- ex: CPF, Email, Phone -->
+- **Retention Policy**: <!-- ex: 5 years after account deletion -->
+- **Data Subject Rights Workflow**: <!-- ex: manual deletion script -->
+```
 
 ---
 
 ## Última atualização
 
 - Data: [YYYY-MM-DD]
-- Motivo: [ex: adição do módulo de pagamentos / decisão arquitetural X]
+- Motivo: [Atualização para workflow avançado multi-executor]
 - Sincronizado via `/sync`: [sim / não]

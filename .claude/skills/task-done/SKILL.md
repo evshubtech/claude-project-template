@@ -7,27 +7,21 @@ description: Runs the completion flow for a task — quality scoring, SAST, ADR 
 
 Usage: `/task-done TASK-XXX`
 
-## Step 0 — Mark task as in progress
+## Step 0 — Verify task status
 
 Read `BACKLOG.md` and locate the task matching the provided ID.
 
 If not found, stop and report:
 > "Task [TASK-XXX] not found in BACKLOG.md. Check the ID and try again."
 
-If the task status is not `PRONTO`, stop and report:
-> "Task [TASK-XXX] has status [current status]. Only PRONTO tasks can be started via /task-done."
+If the task status is not `EM PROGRESSO`, stop and report:
+> "Task [TASK-XXX] has status [current status]. Only EM PROGRESSO tasks can be finished via /task-done. Make sure you used /session-start or manually marked it as EM PROGRESSO before starting implementation."
 
 **Gate 0 Assumption:**
 This command assumes Gate 0 (Gemini `/review`) has been completed and approved by the user. Proceed only after Gemini approval.
 
-Update the task status in `BACKLOG.md`:
-
-```
-**Status:** PRONTO  →  **Status:** EM PROGRESSO
-```
-
 Confirm to the user:
-> "Task [TASK-XXX] marked as EM PROGRESSO. Running quality gates…"
+> "Task [TASK-XXX] verified as EM PROGRESSO. Running quality gates…"
 
 ---
 
@@ -141,7 +135,7 @@ Only after explicit "sim" confirmation. Append a new session block to `SESSION_L
 ```
 ## [CLAUDE] Sessão YYYY-MM-DD HH:MM
 
-**Sprint:** [from CONTEXT.md]
+**Épico:** [from CONTEXT.md]
 **Branch:** [current git branch]
 **Tarefa:** TASK-XXX — [description]
 **Score Gate 1:** X.X/10

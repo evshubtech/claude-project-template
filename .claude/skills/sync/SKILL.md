@@ -17,7 +17,7 @@ Synchronizes the project's living memory files to ensure all agents (Claude and 
 ## What it does
 
 1. **Update CONTEXT.md**:
-   - Refreshes the current sprint objective.
+   - Refreshes the current epic objective.
    - Lists active decisions and critical blockers.
    - Sets the project "pulse" for the next sessions.
 
